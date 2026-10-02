@@ -1,0 +1,28 @@
+name: MongoDB Atlas Uptime Monitor
+
+on:
+  schedule:
+    # Runs every 6 hours (more than enough to prevent an M0 cluster from pausing)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows you to manually trigger it from the GitHub Actions UI
+
+jobs:
+  ping-db:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4
+      with:
+        node-node-version: '20'
+
+    - name: Install MongoDB Driver
+      run: npm install mongodb
+
+    - name: Execute Ping Script
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      run: node ping.js
